@@ -1,0 +1,12 @@
+{
+    "origin": [0.0, 0.0, 0.0],
+    "size": [1.5, 1.0, 0.0],
+    "radius_range": [0.03, 0.03],
+    "minimum_distance": 0.01,
+    "periodicity": [true, false, false],
+    "number": 0,
+    "porosity": 0.0,
+    "numberPorosityMax": 0,
+    "maximum_iterations": 100000,
+    "indent": [0.75, 0, 0]
+}
