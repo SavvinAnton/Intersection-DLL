@@ -2,6 +2,7 @@
 
 #define API
 #define API_def extern "C" API
+#define _USE_MATH_DEFINES
 
 #include <iostream>
 #include <list>
@@ -53,7 +54,7 @@ struct Assistant {
     Point center;
     Point min;
     Point max;
-    long double porosity, volume, volume_full;
+    long double porosity, density_obstacles, density_area;
     int dimension;
 };
 

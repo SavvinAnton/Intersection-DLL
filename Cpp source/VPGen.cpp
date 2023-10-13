@@ -54,11 +54,6 @@ inline bool inside(Domain domain, Obstacle obstacle) {
 }
 
 
-API void setPrintInfo(void (*f)(int, long double)) {
-    (*f)(10, 0.1);
-}
-
-
 API long double* generate(Domain domain, void (*f)(int, long double)) {
     srand(time(NULL));
 
@@ -103,31 +98,24 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
     assistant.center.y << ", " <<
     assistant.center.z << ", " << std::endl;
 
-    // check dimension
-    if (domain.size.x != 0 && domain.size.y != 0 && domain.size.z == 0) {
-        assistant.volume = domain.size.x * domain.size.y;
-        assistant.volume_full = domain.size.x * domain.size.y;
+    if (domain.size.x != 0.0 && domain.size.y != 0.0 && domain.size.z == 0.0) {
+        assistant.density_area = domain.size.x * domain.size.y;
         assistant.dimension = 2;
-    } else if (domain.size.x != 0 && domain.size.y != 0 && domain.size.z != 0) {
-        assistant.volume = domain.size.x * domain.size.y * domain.size.z;
-        assistant.volume_full = domain.size.x * domain.size.y * domain.size.z;
+    } else if (domain.size.x != 0.0 && domain.size.y != 0.0 && domain.size.z != 0.0) {
+        assistant.density_area = domain.size.x * domain.size.y * domain.size.z;
         assistant.dimension = 3;
     } else {
-        // raise error (wrong dimension)
+        throw std::invalid_argument("There is only (xy) or (xyz) supported!");
     }
 
     std::list<Obstacle> obstacles = {};
+    assistant.density_obstacles = 0.0;
 
-    // start iterations
     for (int iteration = 0; iteration < domain.iterations; iteration++) {
-        // create obstacle
         Obstacle obstacle = createObstacle(domain);
-        // std::cout << "NEW OBSTACLE" << std::endl;
 
-        // check intersection
         if (checkIntersection(domain, obstacles, obstacle)) continue;
 
-        // check periodicity
         long double x_b = obstacle.center.x + 2 * std::copysignl(assistant.center.x - domain.origin.x, assistant.center.x - obstacle.center.x);
         long double y_b = obstacle.center.y + 2 * std::copysignl(assistant.center.y - domain.origin.y, assistant.center.y - obstacle.center.y);
         long double z_b = obstacle.center.z + 2 * std::copysignl(assistant.center.z - domain.origin.z, assistant.center.z - obstacle.center.z);
@@ -140,8 +128,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
         if (domain.periodicity.x) {
             if (domain.periodicity.y) {
                 if (domain.periodicity.z) {
-                    Obstacle test_obstacle_xyz;
-                    memcpy(&test_obstacle_xyz, &obstacle, sizeof(obstacle));
+                    Obstacle test_obstacle_xyz = obstacle;
                     test_obstacle_xyz.center.x = x_b;
                     test_obstacle_xyz.center.y = y_b;
                     test_obstacle_xyz.center.z = z_b;
@@ -151,8 +138,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
                         created_obstacles_area += calculateDensity(assistant, domain, test_obstacle_xyz);
                     }
                 }
-                Obstacle test_obstacle_xy;
-                memcpy(&test_obstacle_xy, &obstacle, sizeof(obstacle));
+                Obstacle test_obstacle_xy = obstacle;
                 test_obstacle_xy.center.x = x_b;
                 test_obstacle_xy.center.y = y_b;
                 if (inside(domain, test_obstacle_xy)) {
@@ -162,8 +148,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
                 }
             }
             if (domain.periodicity.z) {
-                Obstacle test_obstacle_xz;
-                memcpy(&test_obstacle_xz, &obstacle, sizeof(obstacle));
+                Obstacle test_obstacle_xz = obstacle;
                 test_obstacle_xz.center.x = x_b;
                 test_obstacle_xz.center.z = z_b;
                 if (inside(domain, test_obstacle_xz)) {
@@ -172,8 +157,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
                     created_obstacles_area += calculateDensity(assistant, domain, test_obstacle_xz);
                 }
             }
-            Obstacle test_obstacle_x;
-            memcpy(&test_obstacle_x, &obstacle, sizeof(obstacle));
+            Obstacle test_obstacle_x = obstacle;
             test_obstacle_x.center.x = x_b;
             if (inside(domain, test_obstacle_x)) {
                 if (checkIntersection(domain, test_obstacles, test_obstacle_x)) continue;
@@ -183,8 +167,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
         }
         if (domain.periodicity.y) {
             if (domain.periodicity.z) {
-                Obstacle test_obstacle_yz;
-                memcpy(&test_obstacle_yz, &obstacle, sizeof(obstacle));
+                Obstacle test_obstacle_yz = obstacle;
                 test_obstacle_yz.center.y = y_b;
                 test_obstacle_yz.center.z = z_b;
                 if (inside(domain, test_obstacle_yz)) {
@@ -193,8 +176,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
                     created_obstacles_area += calculateDensity(assistant, domain, test_obstacle_yz);
                 }
             }
-            Obstacle test_obstacle_y;
-            memcpy(&test_obstacle_y, &obstacle, sizeof(obstacle));
+            Obstacle test_obstacle_y = obstacle;
             test_obstacle_y.center.y = y_b;
             if (inside(domain, test_obstacle_y)) {
                 if (checkIntersection(domain, test_obstacles, test_obstacle_y)) continue;
@@ -203,8 +185,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
             }
         }
         if (domain.periodicity.z) {
-            Obstacle test_obstacle_z;
-            memcpy(&test_obstacle_z, &obstacle, sizeof(obstacle));
+            Obstacle test_obstacle_z = obstacle;
             test_obstacle_z.center.z = z_b;
             if (inside(domain, test_obstacle_z)) {
                 if (checkIntersection(domain, test_obstacles, test_obstacle_z)) continue;
@@ -215,20 +196,16 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
         
         if (domain.counter.type == 0 && test_obstacles.size() > domain.counter.number) continue;
         obstacles = test_obstacles;
-        assistant.volume -= created_obstacles_area;
+        assistant.density_obstacles += created_obstacles_area;
 
-        // std::cout << std::endl;
-        assistant.porosity = assistant.volume / assistant.volume_full * 100;
+        assistant.porosity = (assistant.density_area - assistant.density_obstacles) / assistant.density_area * 100;
         (*f)(obstacles.size(), assistant.porosity);
 
-        // TODO check stop conditions
         if (domain.counter.type == 0) {
-            // by number
             if (obstacles.size() == domain.counter.number) {
                 break;
             }
         } else if (domain.counter.type == 1) {
-            // by porosity
             if (domain.counter.porosity > assistant.porosity) {
                 break;
             }
@@ -240,12 +217,11 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
                 domain.counter.type = 1;
                 std::cout << "domain.counter.type is not defined\nswitching to \"by porosity\"" << std::endl;
             } else {
-                // raise error
+                throw std::invalid_argument("ERROR: domain.counter.type is wrong!");
             }
         }
     }
 
-    // done
     OBSTACLES = obstacles;
 
     long double* res = new long double[2];
@@ -259,7 +235,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
 API Obstacle* getObstacles() {
     Obstacle* obstacles = new Obstacle[OBSTACLES.size()];
     int i = 0;
-    for ( Obstacle obstacle : OBSTACLES ) {
+    for (Obstacle obstacle : OBSTACLES) {
         obstacles[i] = obstacle;
         i++;
     }
