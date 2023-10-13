@@ -65,39 +65,6 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
         domain.origin.z + domain.size.z / 2
     };
 
-    std::cout <<
-    "Origin: " <<
-    domain.origin.x << ", " <<
-    domain.origin.y << ", " <<
-    domain.origin.z << ";" << std::endl <<
-    "Size: " <<
-    domain.size.x << ", " <<
-    domain.size.y << ", " <<
-    domain.size.z << ";" << std::endl <<
-    "Indent: " <<
-    domain.indent.x << ", " <<
-    domain.indent.y << ", " <<
-    domain.indent.z << ";" << std::endl <<
-    "Periodicity: " <<
-    domain.periodicity.x << ", " <<
-    domain.periodicity.y << ", " <<
-    domain.periodicity.z << ";" << std::endl <<
-    "Radius: " <<
-    domain.radius.min << " - " <<
-    domain.radius.max << ";" << std::endl <<
-    "Counter: " <<
-    domain.counter.type << ", " <<
-    domain.counter.number << ", " <<
-    domain.counter.porosity << "%;" << std::endl <<
-    "Minimum distance: " <<
-    domain.minimum_distance << ";" << std::endl <<
-    "Iterations: " <<
-    domain.iterations << ";" << std::endl <<
-    "Center: " <<
-    assistant.center.x << ", " <<
-    assistant.center.y << ", " <<
-    assistant.center.z << ", " << std::endl;
-
     if (domain.size.x != 0.0 && domain.size.y != 0.0 && domain.size.z == 0.0) {
         assistant.density_area = domain.size.x * domain.size.y;
         assistant.dimension = 2;

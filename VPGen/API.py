@@ -23,7 +23,7 @@ class Point(Structure):
         ('z', c_longdouble),
     ]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'({self.x}, {self.y}, {self.z})'
 
 
@@ -70,18 +70,32 @@ class Obstacle(Structure):
         ('radius', c_longdouble),
     ]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.center} ({self.radius})'
 
 
-def loadLibrary(filename):
+def loadLibrary(filename: str) -> CDLL:
+    '''
+    Loads shared library with random algorithm written in c++.
+
+    filename: str - path to library
+
+    return - ctypes.CDLL
+    '''
     lib = CDLL(filename)
     lib.generate.argtypes = (Domain, CALLBACK_TYPE)
     lib.generate.restype = POINTER(c_longdouble * 2)
     return lib
 
 
-def createDomain(data):
+def createDomain(data: dict) -> Domain:
+    '''
+    Creates 'Domain' from 'dict'.
+
+    data: dict - dict with domain settings
+
+    return - Domain
+    '''
     return Domain(
             c_int(data['dimension']),
             Point(*data['origin']),
@@ -102,39 +116,65 @@ def createDomain(data):
         )
 
 
-def loadGeometry(filename):
+def loadGeometry(filename: str) -> Domain:
+    '''
+    Loads dict with domain settings from file.
+
+    filename: str - path to .json file with domain settings
+
+    return - Domain
+    '''
     with open(filename) as file:
         data = load(file)
-    return data
+    return createDomain(data)
 
 
-def generateFromFile(filename):
-    data = loadGeometry(filename)
-    generateFromDict(data)
+def generateFromFile(filename: str) -> tuple:
+    '''
+    Generates from file with domain settings and return tuple of obstacles, number of obstacles, porosity, generating time.
+
+    filename: str - path to .json file with domain settings
+
+    return - tuple
+    '''
+    domain = loadGeometry(filename)
+    return generate(domain)
 
 
-def generateFromDict(data):
-    domain = createDomain(data)
-    generate(domain)
+def generate(domain: Domain, callback_function=lambda *_: None) -> tuple:
+    '''
+    Generates from domain and return tuple of obstacles, number of obstacles, porosity, generating time.
 
+    domain: Domain - geometry
+    callback_function: callable - function that called every iteration, must be (int, float) -> None
 
-def generate(domain):
+    return - tuple
+    '''
     library_path = dirname(abspath(__file__))
     lib = loadLibrary(f'{library_path}/VPGen.so')
-    callback = CALLBACK_TYPE(printer)
+    callback_function = CALLBACK_TYPE(callback_function)
 
     start = perf_counter()
-    obstacles_number, porosity = lib.generate(domain, callback).contents
+    obstacles_number, porosity = lib.generate(domain, callback_function).contents
     end = perf_counter()
+
     obstacles_number = int(obstacles_number)
-    print('Obstacles:', obstacles_number, 'Porosity:', round(porosity, 3), 'Time:', round(end - start, 1))
     lib.getObstacles.restype = POINTER(Obstacle * obstacles_number)
     obstacles = lib.getObstacles().contents
-    # print(*obstacles, sep='\n')
-    plot2d(domain, obstacles, savefig='domain', indent=False)
+    return obstacles, obstacles_number, porosity, end - start
 
 
-def plot2d(domain, obstacles, savefig=None, indent=True):
+def plot2d(domain: Domain, obstacles: tuple, savefig: str=None, indent: bool=True) -> None:
+    '''
+    Creates plot of obstacles (circles).
+
+    domain: Domain - geometry
+    obstacles: tuple - tuple of obstacles
+    savefig: str - name of filename to save or will show if None
+    indent: bool - show indent or not
+
+    return - None
+    '''
     ax, fig = pyplot.subplots()
 
     for obstacle in obstacles:
@@ -158,13 +198,16 @@ def plot2d(domain, obstacles, savefig=None, indent=True):
         ax.savefig(savefig + '.png')
 
 
-def plot3d(domain, obstacles):
+def plot3d(domain: Domain, obstacles:tuple) -> None:
+    '''
+    Creates plot of obstacles (spheres).
+
+    domain: Domain - geometry
+    obstacles: tuple - tuple of obstacles
+
+    return - None
+    '''
     ...  # TODO make using vtk
-
-
-def printer(obstacles, porosity):
-    # print(f'Obstacles: {obstacles}, porosity: {porosity}')
-    ...
 
 
 CALLBACK_TYPE = CFUNCTYPE(c_void_p, c_int, c_longdouble)

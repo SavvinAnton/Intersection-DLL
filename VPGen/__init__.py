@@ -1,1 +1,1 @@
-from .API import generateFromFile, generateFromDict
+from .API import generateFromFile, generate, plot2d, plot3d, loadGeometry
