@@ -104,23 +104,11 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
     assistant.center.z << ", " << std::endl;
 
     // check dimension
-    if (domain.size.x == 0 && domain.size.y != 0 && domain.size.z != 0) {
-        assistant.axises = Periodicity{false, true, true};
-        assistant.volume = domain.size.y * domain.size.z;
-        assistant.volume_full = domain.size.y * domain.size.z;
-        assistant.dimension = 2;
-    } else if (domain.size.x != 0 && domain.size.y == 0 && domain.size.z != 0) {
-        assistant.axises = Periodicity{true, false, true};
-        assistant.volume = domain.size.x * domain.size.z;
-        assistant.volume_full = domain.size.x * domain.size.z;
-        assistant.dimension = 2;
-    } else if (domain.size.x != 0 && domain.size.y != 0 && domain.size.z == 0) {
-        assistant.axises = Periodicity{true, true, false};
+    if (domain.size.x != 0 && domain.size.y != 0 && domain.size.z == 0) {
         assistant.volume = domain.size.x * domain.size.y;
         assistant.volume_full = domain.size.x * domain.size.y;
         assistant.dimension = 2;
     } else if (domain.size.x != 0 && domain.size.y != 0 && domain.size.z != 0) {
-        assistant.axises = Periodicity{true, true, true};
         assistant.volume = domain.size.x * domain.size.y * domain.size.z;
         assistant.volume_full = domain.size.x * domain.size.y * domain.size.z;
         assistant.dimension = 3;
@@ -144,18 +132,14 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
         long double y_b = obstacle.center.y + 2 * std::copysignl(assistant.center.y - domain.origin.y, assistant.center.y - obstacle.center.y);
         long double z_b = obstacle.center.z + 2 * std::copysignl(assistant.center.z - domain.origin.z, assistant.center.z - obstacle.center.z);
 
-        bool x = assistant.axises.x && domain.periodicity.x;
-        bool y = assistant.axises.y && domain.periodicity.y;
-        bool z = assistant.axises.z && domain.periodicity.z;
-
         std::list<Obstacle> test_obstacles(obstacles);
         test_obstacles.insert(test_obstacles.end(), obstacle);
 
         long double created_obstacles_area = calculateDensity(assistant, domain, obstacle);
 
-        if (x) {
-            if (y) {
-                if (z) {
+        if (domain.periodicity.x) {
+            if (domain.periodicity.y) {
+                if (domain.periodicity.z) {
                     Obstacle test_obstacle_xyz;
                     memcpy(&test_obstacle_xyz, &obstacle, sizeof(obstacle));
                     test_obstacle_xyz.center.x = x_b;
@@ -177,7 +161,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
                     created_obstacles_area += calculateDensity(assistant, domain, test_obstacle_xy);
                 }
             }
-            if (z) {
+            if (domain.periodicity.z) {
                 Obstacle test_obstacle_xz;
                 memcpy(&test_obstacle_xz, &obstacle, sizeof(obstacle));
                 test_obstacle_xz.center.x = x_b;
@@ -197,8 +181,8 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
                 created_obstacles_area += calculateDensity(assistant, domain, test_obstacle_x);
             }
         }
-        if (y) {
-            if (z) {
+        if (domain.periodicity.y) {
+            if (domain.periodicity.z) {
                 Obstacle test_obstacle_yz;
                 memcpy(&test_obstacle_yz, &obstacle, sizeof(obstacle));
                 test_obstacle_yz.center.y = y_b;
@@ -218,7 +202,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
                 created_obstacles_area += calculateDensity(assistant, domain, test_obstacle_y);
             }
         }
-        if (z) {
+        if (domain.periodicity.z) {
             Obstacle test_obstacle_z;
             memcpy(&test_obstacle_z, &obstacle, sizeof(obstacle));
             test_obstacle_z.center.z = z_b;

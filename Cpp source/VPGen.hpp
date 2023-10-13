@@ -51,7 +51,6 @@ struct Obstacle {
 
 struct Assistant {
     Point center;
-    Periodicity axises;
     Point min;
     Point max;
     long double porosity, volume, volume_full;
