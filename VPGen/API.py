@@ -10,6 +10,11 @@ from ctypes import (
     CFUNCTYPE,
     c_void_p,
 )
+# from vtk import (
+#     vtkRenderWindow,
+#     vtkRenderer,
+#     vtkRenderWindowInteractor,
+# )
 from json import load
 from os.path import abspath, dirname
 from matplotlib import pyplot, patches
@@ -151,7 +156,7 @@ def generate(domain: Domain, callback_function=lambda *_: None) -> tuple:
     return - tuple
     '''
     library_path = dirname(abspath(__file__))
-    lib = loadLibrary(f'{library_path}/VPGen.so')
+    lib = loadLibrary(f'{library_path}/VPGen.dll')
     callback_function = CALLBACK_TYPE(callback_function)
 
     start = perf_counter()

@@ -162,6 +162,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
         }
         
         if (domain.counter.type == 0 && test_obstacles.size() > domain.counter.number) continue;
+        iteration = 0;
         obstacles = test_obstacles;
         assistant.density_obstacles += created_obstacles_area;
 

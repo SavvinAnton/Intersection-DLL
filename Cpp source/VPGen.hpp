@@ -1,6 +1,14 @@
 #pragma once
 
-#define API
+#ifdef __linux__
+    #define export
+#elif _WIN32
+    #define export __declspec(dllexport)
+#else
+    #define export
+#endif
+
+#define API export
 #define API_def extern "C" API
 #define _USE_MATH_DEFINES
 
@@ -8,6 +16,8 @@
 #include <list>
 #include <cmath>
 #include <cstring>
+#include <time.h>
+
 
 struct Point {
     long double x, y, z;
@@ -61,4 +71,3 @@ struct Assistant {
 
 API_def long double* generate(Domain domain, void (*f)(int, long double));
 API_def Obstacle* getObstacles();
-API_def void setPrintInfo(void (*f)(int, long double));
