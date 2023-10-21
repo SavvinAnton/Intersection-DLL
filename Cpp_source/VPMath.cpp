@@ -1,4 +1,5 @@
-#include "VPGen.hpp"
+#include <include/VPGen.h>
+#include <include/VPMath.h>
 
 
 inline long double areaIntegral(Obstacle obstacle, long double x) {
@@ -98,7 +99,7 @@ inline long double getVolume(Assistant assistant, Domain domain, Obstacle obstac
 }
 
 
-inline long double calculateDensity(Assistant assistant, Domain domain, Obstacle obstalce) {
+long double calculateDensity(Assistant assistant, Domain domain, Obstacle obstalce) {
     if (assistant.dimension == 2) {
         return getArea(assistant, domain, obstalce);
     } else if (assistant.dimension == 3) {

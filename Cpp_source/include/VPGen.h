@@ -1,17 +1,16 @@
 #pragma once
 
 #ifdef __linux__
-    #define export
+    #define decl
 #elif _WIN32
-    #define export __declspec(dllexport)
+    #define decl __declspec(dllexport)
 #else
-    #define export
+    #define decl
 #endif
 
-#define API export
+#define API decl
 #define API_def extern "C" API
 #define _USE_MATH_DEFINES
-
 #include <iostream>
 #include <list>
 #include <cmath>

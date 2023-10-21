@@ -1,5 +1,5 @@
-#include "VPGen.hpp"
-#include "Math.cpp"
+#include <include/VPGen.h>
+#include <include/VPMath.h>
 
 
 std::list<Obstacle> OBSTACLES;
@@ -54,7 +54,7 @@ inline bool inside(Domain domain, Obstacle obstacle) {
 }
 
 
-API long double* generate(Domain domain, void (*f)(int, long double)) {
+API_def long double* generate(Domain domain, void (*f)(int, long double)) {
     srand(time(NULL));
 
     Assistant assistant;
@@ -200,7 +200,7 @@ API long double* generate(Domain domain, void (*f)(int, long double)) {
 }
 
 
-API Obstacle* getObstacles() {
+API_def Obstacle* getObstacles() {
     Obstacle* obstacles = new Obstacle[OBSTACLES.size()];
     int i = 0;
     for (Obstacle obstacle : OBSTACLES) {

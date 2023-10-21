@@ -1,0 +1,12 @@
+\__pycache__
+.vscode
+Archive
+domain.png
+test_data.json
+VPGen.so
+VPGen.dll
+checkArchitecture.bat
+checkDependencies.bat
+obj
+VPGen.exp
+VPGen.lib

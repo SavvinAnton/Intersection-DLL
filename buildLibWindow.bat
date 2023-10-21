@@ -1,0 +1,3 @@
+echo Building VPGen.dll...
+@SET LIB=C:/"Program Files (x86)"/"Windows Kits"/10/Lib/10.0.19041.0/um/x64;C:/"Program Files (x86)"/"Windows Kits"/10/Lib/10.0.19041.0/ucrt/x64;C:/"Program Files"/"Microsoft Visual Studio"/2022/Community/VC/Tools/MSVC/14.32.31326/lib/x64;
+cl /LD /EHsc /Fo"./obj/" -I./Cpp_source/ -IC:/"Program Files"/"Microsoft Visual Studio"/2022/Community/VC/Tools/MSVC/14.32.31326/include -IC:/"Program Files (x86)"/"Windows Kits"/10/Include/10.0.19041.0/um -IC:/"Program Files (x86)"/"Windows Kits"/10/Include/10.0.19041.0/shared -IC:/"Program Files (x86)"/"Windows Kits"/10/Include/10.0.19041.0/ucrt Cpp_source/VPGen.cpp Cpp_source/VPMath.cpp Cpp_source/DLLMain.cpp /link /out:VPgen/VPGen.dll

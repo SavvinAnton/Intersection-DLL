@@ -19,6 +19,7 @@ from json import load
 from os.path import abspath, dirname
 from matplotlib import pyplot, patches
 from time import perf_counter
+from platform import system
 
 
 class Point(Structure):
@@ -155,8 +156,7 @@ def generate(domain: Domain, callback_function=lambda *_: None) -> tuple:
 
     return - tuple
     '''
-    library_path = dirname(abspath(__file__))
-    lib = loadLibrary(f'{library_path}/VPGen.dll')
+    lib = loadLibrary(LIB_PATH)
     callback_function = CALLBACK_TYPE(callback_function)
 
     start = perf_counter()
@@ -215,4 +215,13 @@ def plot3d(domain: Domain, obstacles:tuple) -> None:
     ...  # TODO make using vtk
 
 
+LIBRARY_DIRECTORY = dirname(abspath(__file__))
 CALLBACK_TYPE = CFUNCTYPE(c_void_p, c_int, c_longdouble)
+SYSTEM = system()
+LIB_PATH = LIBRARY_DIRECTORY
+if SYSTEM == 'Linux':
+    LIB_PATH += '/VPGen.so'
+elif SYSTEM == 'Windows':
+    LIB_PATH += '/VPGen.dll'
+else:
+    raise OSError('Only Linux/Windows')
