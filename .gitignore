@@ -2,7 +2,6 @@
 .vscode
 Archive
 domain.png
-test_data.json
 VPGen.so
 VPGen.dll
 checkArchitecture.bat
