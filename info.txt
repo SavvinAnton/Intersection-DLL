@@ -1,1 +1,0 @@
-buildLibWindow.bat must be edited to suit your system. Your Windows Kit or Visual Studio may be different from mine. I don't plan to use cmake at the moment.
