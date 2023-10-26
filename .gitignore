@@ -2,10 +2,10 @@
 .vscode
 Archive
 domain.png
-VPGen.so
-VPGen.dll
 checkArchitecture.bat
 checkDependencies.bat
 obj
 VPGen.exp
 VPGen.lib
+data.json
+obstacles.json
