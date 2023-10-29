@@ -13,6 +13,7 @@
 #define _USE_MATH_DEFINES
 #include <iostream>
 #include <list>
+#include <vector>
 #include <cmath>
 #include <cstring>
 #include <time.h>
@@ -50,6 +51,8 @@ struct Domain {
     Counter counter;
     long double minimum_distance;
     unsigned int iterations;
+    bool exact_count;
+    short order;
 };
 
 

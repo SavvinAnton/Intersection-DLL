@@ -1,8 +1,9 @@
 #include <include/VPGen.h>
 #include <include/VPMath.h>
+#include <omp.h>
 
 
-std::list<Obstacle> OBSTACLES;
+std::vector<Obstacle> OBSTACLES;
 
 
 inline long double frand(long double min, long double max) {
@@ -31,13 +32,23 @@ inline long double distance(Obstacle obstacle1, Obstacle obstacle2) {
 }
 
 
-inline bool checkIntersection(Domain domain, std::list<Obstacle> obstacles, Obstacle obstacle1) {
-    for ( Obstacle obstacle2 : obstacles ) {
+inline bool checkIntersection(Domain domain, std::vector<Obstacle> obstacles, Obstacle obstacle1) {
+    // for ( Obstacle obstacle2 : obstacles )
+    //     if (distance(obstacle1, obstacle2) < (obstacle1.radius + obstacle2.radius + domain.minimum_distance))
+    //         return true;
+    // return false;
+
+    bool intersect = false;
+    #pragma omp parallel for shared(intersect)
+    for (int i = 0; i < obstacles.size(); i++) {
+        if (intersect) continue;
+        Obstacle obstacle2 = obstacles.at(i);
         if (distance(obstacle1, obstacle2) < (obstacle1.radius + obstacle2.radius + domain.minimum_distance)) {
-            return true;
+            #pragma omp critical (set)
+            intersect = true;
         }
     }
-    return false;
+    return intersect;
 }
 
 
@@ -75,7 +86,7 @@ API_def long double* generate(Domain domain, void (*f)(int, long double)) {
         throw std::invalid_argument("There is only (xy) or (xyz) supported!");
     }
 
-    std::list<Obstacle> obstacles = {};
+    std::vector<Obstacle> obstacles = {};
     assistant.density_obstacles = 0.0;
 
     for (int iteration = 0; iteration < domain.iterations; iteration++) {
@@ -87,7 +98,7 @@ API_def long double* generate(Domain domain, void (*f)(int, long double)) {
         long double y_b = obstacle.center.y + 2 * std::copysignl(assistant.center.y - domain.origin.y, assistant.center.y - obstacle.center.y);
         long double z_b = obstacle.center.z + 2 * std::copysignl(assistant.center.z - domain.origin.z, assistant.center.z - obstacle.center.z);
 
-        std::list<Obstacle> test_obstacles(obstacles);
+        std::vector<Obstacle> test_obstacles(obstacles);
         test_obstacles.insert(test_obstacles.end(), obstacle);
 
         long double created_obstacles_area = calculateDensity(assistant, domain, obstacle);
@@ -161,7 +172,7 @@ API_def long double* generate(Domain domain, void (*f)(int, long double)) {
             }
         }
         
-        if (domain.counter.type == 0 && test_obstacles.size() > domain.counter.number) continue;
+        if (domain.exact_count && domain.counter.type == 0 && test_obstacles.size() > domain.counter.number) continue;
         iteration = 0;
         obstacles = test_obstacles;
         assistant.density_obstacles += created_obstacles_area;
