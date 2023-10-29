@@ -12,6 +12,8 @@ from ctypes import (
 
 from .IO import loadGeometry, loadLibrary, CALLBACK_TYPE
 from .Classes import Domain, Obstacle, Periodicity, Radius, Point, Counter
+from .NotRandom import generateChess
+from .NotRandom import generateInline
 
 
 def createDomain(data: dict) -> Domain:
@@ -67,9 +69,9 @@ def generate(domain: Domain, callback_function=lambda *_: None) -> tuple:
     '''
 
     if domain.order == 1:
-        print('chess')
+        return generateChess(domain, callback_function)
     elif domain.order == 2:
-        print('inline')
+        return generateInline(domain, callback_function)
     else:
         lib = loadLibrary(LIB_PATH)
         callback_function = CALLBACK_TYPE(callback_function)
