@@ -32,6 +32,9 @@ def plot2d(domain: Domain, obstacles: tuple, savefig: str=None, indent: bool=Tru
         print('No matplotlib?')
         return
 
+    if domain.dimension != 2:
+        print('plot2d!')
+
     ax, fig = pyplot.subplots()
 
     for obstacle in obstacles:
@@ -72,6 +75,9 @@ def plot3d(domain: Domain, obstacles:tuple) -> None:
     if not USE_VTK:
         print('No vtk?')
         return
+
+    if domain.dimension != 3:
+        print('plot3d!')
 
     # TODO make using vtk
 
