@@ -10,5 +10,6 @@
     "radius_range": [0.01, 0.05],
     "minimum_distance": 0.005,
     "iterations": 5000,
-    "exact_count": 0
+    "exact_count": 0,
+    "order": 0
 }
