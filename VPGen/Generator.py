@@ -7,6 +7,7 @@ from ctypes import (
     c_short,
     c_uint,
     c_int,
+    c_bool,
 )
 
 from .IO import loadGeometry, loadLibrary, CALLBACK_TYPE
@@ -38,6 +39,8 @@ def createDomain(data: dict) -> Domain:
             ),
             c_longdouble(data['minimum_distance']),
             c_uint(data['iterations']),
+            c_bool(data['exact_count']),
+            c_short(data['order']),
         )
 
 
@@ -62,17 +65,23 @@ def generate(domain: Domain, callback_function=lambda *_: None) -> tuple:
 
     return - tuple
     '''
-    lib = loadLibrary(LIB_PATH)
-    callback_function = CALLBACK_TYPE(callback_function)
 
-    start = perf_counter()
-    obstacles_number, porosity = lib.generate(domain, callback_function).contents
-    end = perf_counter()
+    if domain.order == 1:
+        print('chess')
+    elif domain.order == 2:
+        print('inline')
+    else:
+        lib = loadLibrary(LIB_PATH)
+        callback_function = CALLBACK_TYPE(callback_function)
 
-    obstacles_number = int(obstacles_number)
-    lib.getObstacles.restype = POINTER(Obstacle * obstacles_number)
-    obstacles = lib.getObstacles().contents
-    return obstacles, obstacles_number, porosity, end - start
+        start = perf_counter()
+        obstacles_number, porosity = lib.generate(domain, callback_function).contents
+        end = perf_counter()
+
+        obstacles_number = int(obstacles_number)
+        lib.getObstacles.restype = POINTER(Obstacle * obstacles_number)
+        obstacles = lib.getObstacles().contents
+        return obstacles, obstacles_number, porosity, end - start
 
 
 LIBRARY_DIRECTORY = dirname(abspath(__file__))

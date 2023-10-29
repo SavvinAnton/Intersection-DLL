@@ -5,6 +5,7 @@ from ctypes import (
     c_short,
     c_uint,
     c_int,
+    c_bool,
 )
 
 
@@ -53,6 +54,8 @@ class Domain(Structure):
         ('counter', Counter),
         ('minimum_distance', c_longdouble),
         ('iterations', c_uint),
+        ('exact_count', c_bool),
+        ('order', c_short),
     ]
 
 
