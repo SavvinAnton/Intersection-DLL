@@ -18,6 +18,9 @@ class Point(Structure):
 
     def __repr__(self) -> str:
         return f'({self.x}, {self.y}, {self.z})'
+    
+    def __call__(self) -> tuple:
+        return self.x, self.y, self.z
 
 
 class Periodicity(Structure):
@@ -26,6 +29,9 @@ class Periodicity(Structure):
         ('y', c_bool),
         ('z', c_bool),
     ]
+    
+    def __call__(self) -> tuple:
+        return self.x, self.y, self.z
 
 
 class Radius(Structure):
@@ -33,6 +39,9 @@ class Radius(Structure):
         ('min', c_longdouble),
         ('max', c_longdouble),
     ]
+    
+    def __call__(self) -> tuple:
+        return self.min, self.max
 
 
 class Counter(Structure):
@@ -41,6 +50,9 @@ class Counter(Structure):
         ('number', c_uint),
         ('porosity', c_longdouble),
     ]
+    
+    def __call__(self) -> tuple:
+        return self.type, self.number, self.porosity
 
 
 class Domain(Structure):
@@ -67,3 +79,6 @@ class Obstacle(Structure):
 
     def __repr__(self) -> str:
         return f'{self.center} ({self.radius})'
+    
+    def __call__(self) -> tuple:
+        return self.center, self.radius
