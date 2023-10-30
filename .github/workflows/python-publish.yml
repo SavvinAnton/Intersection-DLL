@@ -35,6 +35,6 @@ jobs:
     - name: Publish package
       env:
         TWINE_USERNAME: ${{ secrets.GITHUB_TOKEN.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN.PYPI_PASSWORD }}
+        TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN.PYPI_API_TOKEN }}
       run:
         twine upload dist/*
