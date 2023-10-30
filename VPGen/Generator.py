@@ -2,13 +2,6 @@ from ctypes import POINTER
 from time import perf_counter
 from os.path import abspath, dirname
 from platform import system
-from ctypes import (
-    c_longdouble,
-    c_short,
-    c_uint,
-    c_int,
-    c_bool,
-)
 
 from .IO import loadGeometry, loadLibrary, CALLBACK_TYPE
 from .Classes import Domain, Obstacle, Point
