@@ -1,4 +1,8 @@
-import gmsh
+try:
+    import gmsh
+    USE_GMSH = True
+except ModuleNotFoundError:
+    USE_GMSH = False
 
 from . import __core, __pgen, __vgen
 # import __core, __pgen, __vgen
@@ -33,6 +37,9 @@ def generateGeometry(geometry_data):
 
 
 def generateGeometrySkeleton(obstacles, heterogenous, size, dimension, fltk=False):
+    if not USE_GMSH:
+        raise ImportError('GMSH is not found!')
+
     __core.__initialize_gmsh()
 
     if dimension == 2:
@@ -93,6 +100,9 @@ def generateGeometrySkeleton(obstacles, heterogenous, size, dimension, fltk=Fals
 
 
 def generateMesh(obstacles, heterogenous, size, dimension, folder, meshSize=1, algorithm2d=2, algorithm3d=10, fltk=False):
+    if not USE_GMSH:
+        raise ImportError('GMSH is not found!')
+
     __core.__initialize_gmsh()
 
     if dimension == 2:
@@ -138,6 +148,9 @@ def generateMesh(obstacles, heterogenous, size, dimension, folder, meshSize=1, a
 
 
 def loadMesh(fileName, dimension):
+    if not USE_GMSH:
+        raise ImportError('GMSH is not found!')
+
     __core.__initialize_gmsh()
 
     __core.__load_file(fileName)
