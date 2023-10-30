@@ -11,9 +11,7 @@ from ctypes import (
 )
 
 from .IO import loadGeometry, loadLibrary, CALLBACK_TYPE
-from .Classes import Domain, Obstacle, Periodicity, Radius, Point, Counter
-from .NotRandom import generateChess
-from .NotRandom import generateInline
+from .Classes import Domain, Obstacle, Point
 from .Old import generateGeometry
 
 
