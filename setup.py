@@ -13,11 +13,7 @@ setup(
     keywords=['python'],
     platforms=['Windows', 'Unix'],
     classifiers=[
-        'Development Status :: 1 - Planning',
-        'Intended Audience :: Developers',
         'Programming Language :: Python :: 3',
-        'Operating System :: Unix',
-        'Operating System :: Microsoft :: Windows',
     ],
     include_package_data=True,
 )
