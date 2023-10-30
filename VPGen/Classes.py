@@ -21,6 +21,16 @@ class Point(Structure):
     
     def __call__(self) -> tuple:
         return self.x, self.y, self.z
+    
+    def __getitem__(self, key) -> int:
+        if key == 0:
+            return self.x
+        elif key == 1:
+            return self.y
+        elif key == 2:
+            return self.z
+        else:
+            raise KeyError('Uncorrect key')
 
 
 class Periodicity(Structure):
@@ -32,6 +42,16 @@ class Periodicity(Structure):
     
     def __call__(self) -> tuple:
         return self.x, self.y, self.z
+    
+    def __getitem__(self, key) -> int:
+        if key == 0:
+            return self.x
+        elif key == 1:
+            return self.y
+        elif key == 2:
+            return self.z
+        else:
+            raise KeyError('Uncorrect key')
 
 
 class Radius(Structure):
@@ -68,8 +88,47 @@ class Domain(Structure):
         ('iterations', c_uint),
         ('exact_count', c_bool),
         ('order', c_short),
+        ('heterogenous', c_bool),
     ]
 
+    def toJSON(self):
+        return {
+            'dimension': self.dimension,
+            'origin': self.origin(),
+            'size': self.size(),
+            'indent': self.indent(),
+            'periodicity': self.periodicity(),
+            'radius': self.radius(),
+            'type': self.counter.type,
+            'number': self.counter.number,
+            'porosity': self.counter.porosity,
+            'minimum_distance': self.minimum_distance,
+            'iterations': self.iterations,
+            'exact_count': self.exact_count,
+            'order': self.order,
+            'heterogenous': self.heterogenous,
+        }
+
+    @classmethod
+    def fromJSON(cls, json):
+        return cls(
+            c_int(json['dimension']),
+            Point(*json['origin']),
+            Point(*json['size']),
+            Point(*json['indent']),
+            Periodicity(*json['periodicity']),
+            Radius(*json['radius']),
+            Counter(
+                c_short(json['type']),
+                c_uint(json['number']),
+                c_longdouble(json['porosity'])
+            ),
+            c_longdouble(json['minimum_distance']),
+            c_uint(json['iterations']),
+            c_bool(json['exact_count']),
+            c_short(json['order']),
+            c_bool(json['heterogenous']),
+        )
 
 class Obstacle(Structure):
     _fields_ = [

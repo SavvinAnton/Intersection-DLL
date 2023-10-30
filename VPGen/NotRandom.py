@@ -30,10 +30,18 @@ def __calculate_settings(dimension, size, obstacles, periodicity):
         minimum = max(lines)
         axis = lines.index(minimum)
         lines[axis] += 1
+    
+    if lines[0] % 2 == 0:
+        periodicity[0] = False
+    if lines[1] % 2 == 0:
+        periodicity[1] = False
+    if lines[2] % 2 == 0:
+        periodicity[2] = False
 
     indent = [size[i] / (lines[i] + (1 if not periodicity[i] else -1)) for i in range(dimension)]
     if dimension == 2:
-        lines.pop()
+        # lines.pop()
+        indent.append(0)
 
     return lines, indent
 

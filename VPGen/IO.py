@@ -31,6 +31,14 @@ def loadGeometry(filename: str) -> dict:
     return data
 
 
+def saveDomain(filename: str, domain: Domain) -> None:
+    if not filename.endswith('.json'):
+        filename += '.json'
+    
+    with open(filename, 'w') as file:
+        dump(domain.toJSON())
+
+
 def saveObstacles(filename: str, obstacles: tuple[Obstacle]) -> None:
     if not filename.endswith('.json'):
         filename += '.json'

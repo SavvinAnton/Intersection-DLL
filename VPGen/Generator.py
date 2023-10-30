@@ -14,6 +14,7 @@ from .IO import loadGeometry, loadLibrary, CALLBACK_TYPE
 from .Classes import Domain, Obstacle, Periodicity, Radius, Point, Counter
 from .NotRandom import generateChess
 from .NotRandom import generateInline
+from .Old import generateGeometry
 
 
 def createDomain(data: dict) -> Domain:
@@ -24,26 +25,28 @@ def createDomain(data: dict) -> Domain:
 
     return - Domain
     '''
-    return Domain(
-            c_int(data['dimension']),
-            Point(*data['origin']),
-            Point(*data['size']),
-            Point(*data['indent']),
-            Periodicity(*data['periodicity']),
-            Radius(
-                c_longdouble(min(data['radius_range'])),
-                c_longdouble(max(data['radius_range']))
-            ),
-            Counter(
-                c_short(data['type']),
-                c_uint(data['number']),
-                c_longdouble(data['porosity'])
-            ),
-            c_longdouble(data['minimum_distance']),
-            c_uint(data['iterations']),
-            c_bool(data['exact_count']),
-            c_short(data['order']),
-        )
+    # return Domain(
+    #         c_int(data['dimension']),
+    #         Point(*data['origin']),
+    #         Point(*data['size']),
+    #         Point(*data['indent']),
+    #         Periodicity(*data['periodicity']),
+    #         Radius(
+    #             c_longdouble(min(data['radius'])),
+    #             c_longdouble(max(data['radius']))
+    #         ),
+    #         Counter(
+    #             c_short(data['type']),
+    #             c_uint(data['number']),
+    #             c_longdouble(data['porosity'])
+    #         ),
+    #         c_longdouble(data['minimum_distance']),
+    #         c_uint(data['iterations']),
+    #         c_bool(data['exact_count']),
+    #         c_short(data['order']),
+    #         c_bool(data['heterogenous']),
+    #     )
+    return Domain.fromJSON(data)
 
 
 def generateFromFile(filename: str) -> tuple:
@@ -67,13 +70,14 @@ def generate(domain: Domain, callback_function=lambda *_: None) -> tuple:
 
     return - tuple
     '''
-
-    if domain.order == 1:
-        return generateChess(domain, callback_function)
-    elif domain.order == 2:
-        return generateInline(domain, callback_function)
-    else:
+    try:
         lib = loadLibrary(LIB_PATH)
+        LIBRARY_LOADED = True
+    except Exception as error:
+        print(f'[Error] {error}')
+        LIBRARY_LOADED = False
+
+    if LIBRARY_LOADED and domain.order == 0:
         callback_function = CALLBACK_TYPE(callback_function)
 
         start = perf_counter()
@@ -84,6 +88,24 @@ def generate(domain: Domain, callback_function=lambda *_: None) -> tuple:
         lib.getObstacles.restype = POINTER(Obstacle * obstacles_number)
         obstacles = lib.getObstacles().contents
         return obstacles, obstacles_number, porosity, end - start
+    else:
+        geometry_data = {
+            'size': list(domain.size()),
+            'heterogenous': domain.heterogenous,
+            'dimension': domain.dimension,
+            'periodicity': list(domain.periodicity()),
+            'indent': list(domain.indent()),
+            'radius': list(domain.radius()),
+            'porosityNumberButton': 1-domain.counter.type,
+            'porosityNumber': domain.counter.porosity if domain.counter.type == 1 and domain.order == 0 else domain.counter.number,
+            'minimumDistance': domain.minimum_distance,
+            'order': domain.order,
+        }
+        obstacles, porosity, time, heterogenous, size, dimension = generateGeometry(geometry_data)
+        obstacles = list(obstacles)
+        for i, obstacle in enumerate(obstacles):
+            obstacles[i] = Obstacle(Point(*obstacle[:3]), obstacle[3])
+    return obstacles, len(obstacles), porosity, time
 
 
 LIBRARY_DIRECTORY = dirname(abspath(__file__))

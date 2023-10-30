@@ -53,6 +53,7 @@ struct Domain {
     unsigned int iterations;
     bool exact_count;
     short order;
+    bool heterogenous;
 };
 
 
