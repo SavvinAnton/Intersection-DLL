@@ -9,3 +9,6 @@ VPGen.exp
 VPGen.lib
 data.json
 obstacles.json
+build
+dist
+VPGen.egg-info
