@@ -14,7 +14,7 @@ setup(
     platforms=['Windows', 'Unix'],
     classifiers=[
         'Development Status :: 1 - Planning',
-        'Inteded Audience :: Developers',
+        'Intended Audience :: Developers',
         'Programming Language :: Python :: 3',
         'Operating System :: Unix',
         'Operating System :: Microsoft :: Windows',
