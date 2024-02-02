@@ -5,7 +5,7 @@ with open('README.md') as file:
 
 setup(
     name='VPGen',
-    version='0.9.5',
+    version='1.0.0',
     author='Savvin Anton',
     author_email='anv.savvin@gmail.com',
     long_description_content_type='text/markdown',
