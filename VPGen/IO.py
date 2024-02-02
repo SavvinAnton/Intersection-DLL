@@ -47,4 +47,21 @@ def saveObstacles(filename: str, obstacles: tuple[Obstacle]) -> None:
         dump([[obstacle.center.x, obstacle.center.y, obstacle.center.z, obstacle.radius] for obstacle in obstacles], file, indent=4)
 
 
+def saveGeneratedData(filename: str, obstacles: tuple[Obstacle], number: int, porosity: float, time: float) -> None:
+    with open(filename, 'w') as file:
+        dump(
+            {
+                'obstacles': [
+                    [obstacle.center.x, obstacle.center.y, obstacle.center.z, obstacle.radius]
+                    for obstacle in obstacles
+                ],
+                'number': number,
+                'porosity': porosity,
+                'time': time,
+            },
+            file,
+            indent=4,
+        )
+
+
 CALLBACK_TYPE = CFUNCTYPE(c_void_p, c_int, c_longdouble)
