@@ -7,8 +7,12 @@ checkDependencies.bat
 obj
 VPGen.exp
 VPGen.lib
-data.json
+data2d.json
 obstacles.json
 build
 dist
 VPGen.egg-info
+./.idea
+*.xml
+*.iml
+.idea

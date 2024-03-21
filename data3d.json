@@ -1,0 +1,22 @@
+{
+    "dimension": 3,
+    "origin": [0.0, 0.0, 0.0],
+    "size": [10.0, 10.0, 10.0],
+    "indent": [0.0, 0.0, 0.0],
+    "periodicity": [false, true, false],
+    "type": 6,
+    "number": 20,
+    "porosity": 15,
+    "radius": [1, 2],
+    "minimum_distance": 0.005,
+    "iterations": 5000,
+    "exact_count": 0,
+    "order": 0,
+    "heterogenous": 0,
+    "l_min": 1,
+    "l_max": 2,
+    "k_min": 1,
+    "k_max": 2,
+    "m_min": 1,
+    "m_max": 2
+}

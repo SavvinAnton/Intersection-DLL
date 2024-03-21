@@ -7,6 +7,8 @@ from .IO import loadGeometry, loadLibrary, CALLBACK_TYPE
 from .Classes import Domain, Obstacle, Point
 from .Old import generateGeometry
 
+from VPGen.geom3d import PorousBox
+import gmsh
 
 def createDomain(data: dict) -> Domain:
     '''
@@ -50,6 +52,15 @@ def generateFromFile(filename: str) -> tuple:
     '''
     domain = createDomain(loadGeometry(filename))
     return generate(domain)
+
+def generate3d(domain: Domain):
+    gmsh.initialize()
+    pb = PorousBox(domain)
+    pb.fill_box()
+    gmsh.model.occ.synchronize()
+    mesh = gmsh.model.mesh.generate()
+    gmsh.fltk.run()
+    gmsh.finalize()
 
 
 def generate(domain: Domain, callback_function=lambda *_: None) -> tuple:
@@ -102,9 +113,9 @@ def generate(domain: Domain, callback_function=lambda *_: None) -> tuple:
 LIBRARY_DIRECTORY = dirname(abspath(__file__))
 LIB_PATH = LIBRARY_DIRECTORY
 SYSTEM = system()
-if SYSTEM == 'Linux':
+if SYSTEM == 'Linux' or SYSTEM == 'Darwin':
     LIB_PATH += '/VPGen.so'
 elif SYSTEM == 'Windows':
     LIB_PATH += '/VPGen.dll'
 else:
-    raise OSError('Only Linux/Windows')
+    raise OSError('Only Linux/Windows/MacOS')

@@ -72,7 +72,7 @@ def plot2d(domain: Domain, obstacles: tuple, savefig: str=None, indent: bool=Tru
         ax.savefig(savefig + '.png')
 
 
-def plot3d(domain: Domain, obstacles:tuple) -> None:
+def plot3d(domain: Domain, obstacles: tuple) -> None:
     '''
     Creates plot of obstacles (spheres).
 

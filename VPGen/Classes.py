@@ -89,6 +89,12 @@ class Domain(Structure):
         ('exact_count', c_bool),
         ('order', c_short),
         ('heterogenous', c_bool),
+        ('l_min', c_longdouble),
+        ('l_max', c_longdouble),
+        ('k_min', c_longdouble),
+        ('k_max', c_longdouble),
+        ('m_min', c_longdouble),
+        ('m_max', c_longdouble),
     ]
 
     def toJSON(self):
@@ -107,6 +113,12 @@ class Domain(Structure):
             'exact_count': self.exact_count,
             'order': self.order,
             'heterogenous': self.heterogenous,
+            'l_min': self.l_min,
+            'l_max': self.l_max,
+            'k_min': self.k_min,
+            'k_max': self.k_max,
+            'm_min': self.m_min,
+            'm_max': self.m_max
         }
 
     @classmethod
@@ -128,6 +140,12 @@ class Domain(Structure):
             c_bool(json['exact_count']),
             c_short(json['order']),
             c_bool(json['heterogenous']),
+            c_longdouble(json['l_min']),
+            c_longdouble(json['l_max']),
+            c_longdouble(json['k_min']),
+            c_longdouble(json['k_max']),
+            c_longdouble(json['m_min']),
+            c_longdouble(json['m_max']),
         )
 
 class Obstacle(Structure):
