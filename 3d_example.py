@@ -2,6 +2,10 @@ from VPGen import *
 import gmsh
 
 def main():
+    '''
+    type: 6 - ellipsoid,
+    type: 9 - dodecahedron
+    '''
     data = loadGeometry('./data3d.json')
     domain = createDomain(data)
     generate3d(domain)
